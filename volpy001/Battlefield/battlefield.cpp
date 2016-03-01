@@ -31,7 +31,10 @@ class Orc : public WarriorBase {
 public:
     Orc() : WarriorBase(200) {} // our orc constructor calls his parent (cmb) constructor with a much larger health than the default
 public:
-    bool getHitPlain(int strength) { return false; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
+    bool getHitPlain(int strength)
+    {
+        return false;
+    }
     bool getHit(int strengthOfHit) override {
         if (strengthOfHit < 10) // too soft a hit
         {
