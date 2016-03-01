@@ -2,15 +2,15 @@
 #include <iostream>
 #include <vector>
 
-class Combatant {
+class WarriorBase {
 protected:
     std::string m_name;
     int m_health;
 protected:
-    Combatant() : m_health(100) { // constructor, since no return type AND same name as class, so we want to initialize health with 100
+    WarriorBase() : m_health(100) { // constructor, since no return type AND same name as class, so we want to initialize health with 100
 
     }
-    Combatant(int health) : m_health(health) {// another constructor, except in this one the creator or child desides what the health is
+    WarriorBase(int health) : m_health(health) {// another constructor, except in this one the creator or child desides what the health is
 
     }
 
@@ -21,15 +21,15 @@ public:
     int health() const { return m_health; }
     void addHealth(int health) { m_health += health; } // no issues with this, I assume
 public:
-    virtual int hitAnother(Combatant& other) { return 0; } // for later
+    virtual int hitAnother(WarriorBase& other) { return 0; } // for later
 public:
     virtual bool getHit(int strength) { return true; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
     bool getHitPlain(int strength) { return true; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
 };
 
-class Orc : public Combatant {
+class Orc : public WarriorBase {
 public:
-    Orc() : Combatant(200) {} // our orc constructor calls his parent (cmb) constructor with a much larger health than the default
+    Orc() : WarriorBase(200) {} // our orc constructor calls his parent (cmb) constructor with a much larger health than the default
 public:
     bool getHitPlain(int strength) { return false; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
     bool getHit(int strengthOfHit) override {
@@ -49,9 +49,9 @@ public:
     }
 };
 
-class Elf : public Combatant {
+class Elf : public WarriorBase {
 public:
-    Elf() : Combatant(125) {}
+    Elf() : WarriorBase(125) {}
 public:
     bool getHitPlain(int strength) { return false; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
     bool getHit(int strengthOfHit) override {
@@ -71,7 +71,7 @@ public:
     }
 };
 
-class Human : public Combatant {
+class Human : public WarriorBase {
 public:
     bool getHitPlain(int strength) { return false; } //is this the only palce we say that it's virtual? yes, you can also call it virtual in the children, but it's not required
     bool getHit(int strengthOfHit) override {
@@ -94,12 +94,12 @@ public:
 int main()
 {
     // so let's simulate an orc and ahuman hitting each other
-    std::vector<Combatant*> goodGuys;
-    std::vector<Combatant*> badGuys;
+    std::vector<WarriorBase*> goodGuys;
+    std::vector<WarriorBase*> badGuys;
 
     // so, if we change getHit to getHitPlain everywhere, we would expect instant death for eerybody, since getHitPlain returns false, except in the base
     // so, we have two vectors, one for goo, one for bad, so let's create some
-    Combatant *cmb = new Orc;
+    WarriorBase *cmb = new Orc;
     cmb->name("Orc1");
     badGuys.push_back(cmb);
 
@@ -131,13 +131,13 @@ int main()
     for (int i = 1; i < 15; ++i) { // I don't want to do a real battlefield, so I'm just going to go around and hiteverybody with the same force
         int force = i * 10; // every loop we'll slap 10-health points off of everyone
 
-        for (Combatant *c : goodGuys) {
+        for (WarriorBase *c : goodGuys) {
             auto alive = c->getHitPlain(force);
             if (alive) std::cout << c->name() << " hit with " << force << " is alive:" << alive << " health:" << c->health() << std::endl;
         }
 
         
-        for (Combatant *c : badGuys) { //okay got it. 
+        for (WarriorBase *c : badGuys) { //okay got it. 
             auto alive = c->getHitPlain(force);
             if (alive) std::cout << c->name() << " hit with " << force << " is alive:" << alive << " health:" << c->health() << std::endl;
         }
@@ -164,7 +164,7 @@ int main()
     // virtual yes
     // without virtual, the compiler looks at the type of the pointer itself
     // with irtual, it looks at what the pointer points to, and for us, it points to each individual race of combats
-    Combatant *oneGoodGuy = goodGuys[0];
+    WarriorBase *oneGoodGuy = goodGuys[0];
     oneGoodGuy->getHit(0);
     oneGoodGuy->getHitPlain(0);
 
